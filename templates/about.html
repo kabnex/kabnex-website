@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}About — Kabnex{% endblock %}
+
+{% block content %}
+
+<section class="hero" style="padding-bottom:20px;">
+  <div class="container">
+    <span class="eyebrow">who we are</span>
+    <h1 style="max-width:16ch;">One team. One build philosophy.</h1>
+    <p class="lede">Kabnex started as a team who kept getting asked to build the same five things — a site, an app, a video, a look, and somewhere reliable to host it all. So we built a team around doing exactly that, well.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">leadership</span>
+      <h2>Meet the founders</h2>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="founder-card reveal">
+        <div class="avatar" style="width:80px;height:80px;">
+          <img src="{{ url_for('static', filename='img/kabisha-avatar.jpg') }}" alt="Kabisha N" width="200" height="200" loading="lazy">
+        </div>
+        <div>
+          <h3 class="mt-0">Kabisha N</h3>
+          <div class="founder-role">Founder, CEO</div>
+        </div>
+        <p>Kabisha leads engineering and project delivery at Kabnex — turning a brief into a working build, and keeping every project on schedule from first commit to launch.</p>
+        <span class="founder-tag">Engineering &amp; Delivery</span>
+      </div>
+
+      <div class="founder-card reveal">
+        <div class="avatar" style="width:80px;height:80px;">
+          <img src="{{ url_for('static', filename='img/lakshanya-avatar.jpg') }}" alt="Lakshanya M" width="200" height="200" loading="lazy">
+        </div>
+        <div>
+          <h3 class="mt-0">Lakshanya M</h3>
+          <div class="founder-role">CEO</div>
+        </div>
+        <p>Lakshanya leads design and client experience — shaping how every project looks, feels, and reads, and making sure it matches what the client actually asked for.</p>
+        <span class="founder-tag">Design &amp; Client Experience</span>
+      </div>
+
+      <div class="founder-card reveal">
+        <div class="avatar" style="width:80px;height:80px;">
+          <img src="{{ url_for('static', filename='img/kaavya-avatar.jpg') }}" alt="Kaavya G" width="200" height="188" loading="lazy">
+        </div>
+        <div>
+          <h3 class="mt-0">Kaavya G</h3>
+          <div class="founder-role">CEO</div>
+        </div>
+        <p>Kaavya handles client relations and support services — managing the client-facing side of every project and helping resolve issues clients run into along the way.</p>
+        <span class="founder-tag">Client Relations &amp; Support</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">how we work</span>
+      <h2>Five steps, every project.</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-num">01</span>
+        <div>
+          <h4>Discover</h4>
+          <p>We start with what the project actually needs to do, not the feature list — a short call to get the brief straight.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">02</span>
+        <div>
+          <h4>Design</h4>
+          <p>Wireframes or visual drafts, depending on the service — enough to agree on direction before anything is built.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">03</span>
+        <div>
+          <h4>Build</h4>
+          <p>Development, editing, or design production happens in short cycles, with check-ins instead of one big reveal.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">04</span>
+        <div>
+          <h4>Launch</h4>
+          <p>We ship the site, app, video, or asset set — tested, and handed over with what you need to use it.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <span class="step-num">05</span>
+        <div>
+          <h4>Support</h4>
+          <p>Hosting, updates, and maintenance continue for as long as you need them — a project doesn't end at launch.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">what we hold to</span>
+      <h2>Four things that don't change per project</h2>
+    </div>
+
+    <div class="code-panel reveal">
+<span class="cm">// craft</span> — thoughtful work, no filler, no shortcuts that show later<br>
+<span class="cm">// reliability</span> — what we say we'll ship, we ship<br>
+<span class="cm">// partnership</span> — you get a team on call, not a one-off vendor<br>
+<span class="cm">// speed</span> — momentum without cutting corners
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-band reveal">
+      <div>
+        <h2>Want to work with us?</h2>
+        <p>Tell us about your project and we'll get back to you shortly.</p>
+      </div>
+      <a href="{{ url_for('contact') }}" class="btn btn-primary">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

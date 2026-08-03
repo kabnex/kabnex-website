@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Kabnex — Web, App, Video & Design Studio{% endblock %}</title>
+<meta name="description" content="Kabnex is a technology studio building websites, apps, video, and brand design — plus the hosting and maintenance to keep it all running.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ asset_version('css/style.css') }}">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon-32.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/favicon-180.png') }}">
+</head>
+<body>
+
+<a href="#main" class="visually-hidden">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a href="{{ url_for('home') }}" class="logo">
+      <img class="logo-mark" src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="Kabnex logo" width="30" height="30">
+      KABNEX
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{{ url_for('home') }}" {% if active_page == 'home' %}aria-current="page"{% endif %}>Home</a></li>
+      <li><a href="{{ url_for('about') }}" {% if active_page == 'about' %}aria-current="page"{% endif %}>About</a></li>
+      <li><a href="{{ url_for('services') }}" {% if active_page == 'services' %}aria-current="page"{% endif %}>Services</a></li>
+      <li><a href="{{ url_for('contact') }}" {% if active_page == 'contact' %}aria-current="page"{% endif %}>Contact</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="{{ url_for('contact') }}" class="btn btn-ghost">Get in touch</a>
+      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M2 5H18M2 10H18M2 15H18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-col">
+        <a href="{{ url_for('home') }}" class="logo">
+          <img class="logo-mark" src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="Kabnex logo" width="30" height="30">
+          KABNEX
+        </a>
+        <p style="max-width:32ch; margin-top:14px;">A small studio building web, app, video, and design work for teams who'd rather it just worked.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Site</h4>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+          <li><a href="{{ url_for('services') }}">Services</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:kabnextechnologies@gmail.com">kabnextechnologies@gmail.com</a></li>
+          <li><a href="https://instagram.com/kabnex.tech" target="_blank" rel="noopener">@kabnex.tech</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Kabnex Technologies. All rights reserved.</span>
+      <span>Founded by Kabisha N &amp; Lakshanya M</span>
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="{{ url_for('static', filename='js/script.js') }}?v={{ asset_version('js/script.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
