@@ -48,7 +48,7 @@ def inject_asset_version():
     return dict(asset_version=asset_version)
 
 
-COMPANY_EMAIL = "kabnextechnologies@gmail.com"
+COMPANY_EMAIL = "kabishanattudurai@gmail.com"
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # Optional: set this environment variable to also email each submission to

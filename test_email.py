@@ -1,60 +1,57 @@
 """
-Quick standalone test for the Gmail App Password setup.
-Run this BEFORE testing through the website — it isolates the
-email step so you know immediately whether the problem is your
-credentials or something else.
+Quick standalone check that Brevo email sending is configured correctly.
 
-Usage:
-    export KABNEX_SMTP_USER="kabnextechnologies@gmail.com"
-    export KABNEX_SMTP_PASS="your-16-character-app-password"
+Run:
+    export BREVO_API_KEY="your-brevo-api-key"
+    export BREVO_SENDER_EMAIL="kabnextechnologies@gmail.com"   # optional, must be a verified sender
+    python test_email.py
+
+Or, if you have a .env file with these set, just:
     python test_email.py
 """
 
 import os
-import smtplib
-from email.message import EmailMessage
 
-SMTP_USER = os.environ.get("KABNEX_SMTP_USER")
-SMTP_PASS = os.environ.get("KABNEX_SMTP_PASS")
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.environ.get("BREVO_API_KEY")
+SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "kabnextechnologies@gmail.com")
 COMPANY_EMAIL = "kabnextechnologies@gmail.com"
 
-print("Checking environment variables...")
-if not SMTP_USER:
-    print("  ✗ KABNEX_SMTP_USER is NOT set.")
-else:
-    print(f"  ✓ KABNEX_SMTP_USER = {SMTP_USER}")
+print("Checking Brevo configuration...")
 
-if not SMTP_PASS:
-    print("  ✗ KABNEX_SMTP_PASS is NOT set.")
-else:
-    masked = SMTP_PASS[:2] + "*" * (len(SMTP_PASS) - 2)
-    print(f"  ✓ KABNEX_SMTP_PASS = {masked} ({len(SMTP_PASS)} characters)")
-    if len(SMTP_PASS.replace(' ', '')) != 16:
-        print("  ⚠ Gmail App Passwords are normally 16 characters (spaces don't count).")
-        print("    Double-check you copied the whole thing.")
-
-if not (SMTP_USER and SMTP_PASS):
-    print("\nSet both variables first, then re-run this script.")
+if not API_KEY:
+    print("  ✗ BREVO_API_KEY is NOT set.")
     raise SystemExit(1)
+print(f"  ✓ BREVO_API_KEY = {API_KEY[:6]}...{API_KEY[-4:]} ({len(API_KEY)} characters)")
+print(f"  ✓ BREVO_SENDER_EMAIL = {SENDER_EMAIL}")
 
-print("\nConnecting to smtp.gmail.com and attempting to send a test email...")
-try:
-    msg = EmailMessage()
-    msg["Subject"] = "Kabnex — SMTP test email"
-    msg["From"] = SMTP_USER
-    msg["To"] = COMPANY_EMAIL
-    msg.set_content("This is a test email from test_email.py — if you got this, your SMTP setup works.")
+print("\nSending a test email via the Brevo API...")
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(SMTP_USER, SMTP_PASS)
-        server.send_message(msg)
+resp = requests.post(
+    "https://api.brevo.com/v3/smtp/email",
+    headers={
+        "api-key": API_KEY,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    },
+    json={
+        "sender": {"email": SENDER_EMAIL, "name": "Kabnex Website"},
+        "to": [{"email": COMPANY_EMAIL}],
+        "subject": "Kabnex — Brevo test email",
+        "textContent": "This is a test email from test_email.py — if you got this, Brevo is set up correctly.",
+    },
+    timeout=10,
+)
 
-    print(f"✓ SUCCESS — test email sent to {COMPANY_EMAIL}. Check the inbox (and spam folder).")
-except smtplib.SMTPAuthenticationError as exc:
-    print(f"✗ AUTH FAILED — Gmail rejected the username/password: {exc}")
-    print("  Most common causes:")
-    print("  - This is your normal Gmail password, not an App Password (won't work)")
-    print("  - 2-Step Verification isn't enabled on this Google account")
-    print("  - The App Password was copied incorrectly (extra space, missing character)")
-except Exception as exc:
-    print(f"✗ FAILED — {type(exc).__name__}: {exc}")
+if resp.status_code < 300:
+    print(f"  ✓ Sent successfully (status {resp.status_code}). Check {COMPANY_EMAIL} inbox (and spam folder).")
+else:
+    print(f"  ✗ FAILED — status {resp.status_code}")
+    print(f"    Response: {resp.text}")
+    print("\n  Common causes:")
+    print("   - BREVO_API_KEY is wrong or was regenerated")
+    print("   - BREVO_SENDER_EMAIL is not a verified sender in your Brevo account")
