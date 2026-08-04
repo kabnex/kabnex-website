@@ -14,11 +14,10 @@ Then open http://127.0.0.1:5000
 import json
 import os
 import re
-import smtplib
 from datetime import datetime
-from email.message import EmailMessage
 from pathlib import Path
 
+import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 
@@ -52,11 +51,12 @@ def inject_asset_version():
 COMPANY_EMAIL = "kabnextechnologies@gmail.com"
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-# Optional: set these environment variables to also email each submission
-# to COMPANY_EMAIL via Gmail SMTP. If they are not set, submissions are
-# still saved to data/contacts.json, which is enough to run the site.
-SMTP_USER = os.environ.get("KABNEX_SMTP_USER")
-SMTP_PASS = os.environ.get("KABNEX_SMTP_PASS")
+# Optional: set this environment variable to also email each submission to
+# COMPANY_EMAIL via the Brevo HTTP API (sends over port 443, so it works even
+# on hosts that block outbound SMTP ports). If not set, submissions are still
+# saved to data/contacts.json, which is enough to run the site.
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", COMPANY_EMAIL)
 
 
 def ensure_data_file():
@@ -78,25 +78,37 @@ def save_submission(entry: dict):
 
 
 def try_send_email(entry: dict) -> bool:
-    """Best-effort email notification. Never raises — returns False on failure."""
-    if not (SMTP_USER and SMTP_PASS):
-        print("[email] skipped — KABNEX_SMTP_USER / KABNEX_SMTP_PASS not set.")
+    """Best-effort email notification via the Brevo API. Never raises — returns False on failure."""
+    if not BREVO_API_KEY:
+        print("[email] skipped — BREVO_API_KEY not set.")
         return False
     try:
-        msg = EmailMessage()
-        msg["Subject"] = f"New Kabnex enquiry — {entry['service']}"
-        msg["From"] = SMTP_USER
-        msg["To"] = COMPANY_EMAIL
-        msg.set_content(
+        text_body = (
             f"Name: {entry['name']}\n"
             f"Email: {entry['email']}\n"
             f"Service: {entry['service']}\n"
             f"Submitted: {entry['submitted_at']}\n\n"
             f"Message:\n{entry['message']}\n"
         )
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(SMTP_USER, SMTP_PASS)
-            server.send_message(msg)
+        resp = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={
+                "api-key": BREVO_API_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            json={
+                "sender": {"email": BREVO_SENDER_EMAIL, "name": "Kabnex Website"},
+                "to": [{"email": COMPANY_EMAIL}],
+                "replyTo": {"email": entry["email"], "name": entry["name"]},
+                "subject": f"New Kabnex enquiry — {entry['service']}",
+                "textContent": text_body,
+            },
+            timeout=10,
+        )
+        if resp.status_code >= 300:
+            print(f"[email] FAILED to send: {resp.status_code} {resp.text}")
+            return False
         print(f"[email] sent to {COMPANY_EMAIL} ok.")
         return True
     except Exception as exc:
