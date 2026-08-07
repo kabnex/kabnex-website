@@ -47,8 +47,7 @@ def inject_asset_version():
 
     return dict(asset_version=asset_version)
 
-
-COMPANY_EMAIL = "kabishanattudurai@gmail.com"
+COMPANY_EMAIL = "kabnextechnologies@gmail.com"
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # Optional: set this environment variable to also email each submission to
@@ -160,10 +159,13 @@ def api_contact():
     }
 
     save_submission(entry)
-    try_send_email(entry)
 
-    return jsonify(status="ok", message="message received."), 200
+    email_sent = try_send_email(entry)
 
+    if email_sent:
+        return jsonify(status="ok", message="Message sent successfully."), 200
+    else:
+        return jsonify(status="error", message="Email sending failed."), 500
 
 if __name__ == "__main__":
     ensure_data_file()
